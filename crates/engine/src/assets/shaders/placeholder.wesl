@@ -14,7 +14,7 @@ fn fragment(in: FullscreenVertexOutput) -> @location(0) vec4<f32> {
     let index = u32(round(in.uv.x * 255.0));
     let distance = settings.distances[index].x;
 
-    let val = select(0.0, 1.0, 1.0 / distance > abs((in.uv.y - 0.5) * 2.0));
+    let val = select(0.0, 1.0, 1.0 / distance > abs((in.uv.y - 0.5) * 2.0)) / distance;
 
     return vec4<f32>(
         val,
