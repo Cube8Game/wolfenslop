@@ -91,9 +91,16 @@ impl SimpleTileGrid {
         ray.get_position()
     }
 
-    // Helper function
+    // Helper functions
     fn distance(v1: (f32, f32), v2: (f32, f32)) -> f32 {
         ((v1.0-v2.0).squared() + (v1.1-v2.1).squared()).sqrt()
+    }
+
+    fn get_angle_offset(fov: f32, ratio: f32) -> f32 {
+        let max_horizontal_deviation = (fov * 0.5).tan();
+        let ratio_normalized = ratio * 2.0 - 1.0; // -1.0 to 1.0
+        let horizontal_deviation = ratio_normalized * max_horizontal_deviation;
+        horizontal_deviation.atan()
     }
 
     pub fn cast_ray_vertical_distance(&self, ray_angle_offset: f32, ray_position: (f32, f32), direction: f32, max_tiles: usize) -> f32 {
@@ -110,11 +117,8 @@ impl SimpleTileGrid {
     pub fn raycast<const S: usize>(&self, position: (f32, f32), direction: f32, fov: f32) -> [f32; S] {
         let mut result: [f32; S] = [0.0; S];
         for i in 0..S {
-            let ray_angle_offset = fov * ( // Multiply range by FOV
-                ((i as f32) + 0.5) / (S as f32) // From 0.0 to 1.0
-                - 0.5 // From -0.5 to -0.5
-            );
-            result[i] = self.cast_ray_vertical_distance(ray_angle_offset, position, direction, 256)// TODO: Replace magic number with some function argument
+            let ray_angle_offset = Self::get_angle_offset(fov, ((i as f32) + 0.5) / (S as f32));
+            result[i] = self.cast_ray_vertical_distance(ray_angle_offset, position, direction, 256) // TODO: Replace magic number with some function argument
         }
         result
     }
