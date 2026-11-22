@@ -1,6 +1,6 @@
 use crate::{error::Result, ray::{Ray, RayCollisionResult}};
 
-pub trait Tile {
+pub trait Tile: Send + Sync + 'static {
     /// Casts a ray as long as it is in or on the bounds of the tile
     fn cast_ray(&self, incoming_ray: Ray) -> Result<RayCollisionResult>;
 }

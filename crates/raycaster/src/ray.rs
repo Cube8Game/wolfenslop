@@ -8,6 +8,10 @@ impl Ray {
     pub fn from_vector(direction: (f32, f32), position: (f32, f32)) -> Self {
         Self { direction, position }
     }
+
+    pub fn from_radians(direction: f32, position: (f32, f32)) -> Self {
+        Self { direction: (direction.cos(), direction.sin()), position }
+    }
 }
 
 impl Ray {
@@ -21,12 +25,12 @@ impl Ray {
 
     pub fn get_gradient(&self) -> f32 {
         let vector = self.get_direction_vector();
-        vector.0 / vector.1
+        vector.1 / vector.0
     }
 
     pub fn get_gradient_reciprocal(&self) -> f32 {
         let vector = self.get_direction_vector();
-        vector.1 / vector.0
+        vector.0 / vector.1
     }
 }
 
@@ -72,7 +76,7 @@ impl Ray {
     }
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone, Copy)]
 pub enum RayCollisionResult {
     Continue(Ray),
     Hit(f32, f32)

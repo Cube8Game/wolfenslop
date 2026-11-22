@@ -35,6 +35,8 @@ mod tests {
         assert_eq!(tile.cast_ray(ray), Ok(RayCollisionResult::Continue(Ray::from_vector((1.0, -1.0), (3.0, 4.0)))));
         let ray = Ray::from_vector((-1.0, 1.0), (2.5, 4.5));
         assert_eq!(tile.cast_ray(ray), Ok(RayCollisionResult::Continue(Ray::from_vector((-1.0, 1.0), (2.0, 5.0)))));
+        let ray = Ray::from_vector((1.0, 2.0), (2.0, 4.0));
+        assert_eq!(tile.cast_ray(ray), Ok(RayCollisionResult::Continue(Ray::from_vector((1.0, 2.0), (2.5, 5.0)))));
     }
 
     #[test]

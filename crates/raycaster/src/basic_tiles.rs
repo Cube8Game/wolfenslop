@@ -11,26 +11,26 @@ impl Tile for EmptyTile {
             return Err(Error::RayOutOfBounds(incoming_ray));
         }
         if let Some(ray) = incoming_ray.intersection_vertical(aabb.0.0) {
-            let ray_x = ray.get_position().0;
-            if aabb.0.0 <= ray_x && ray_x <= aabb.1.0 {
+            let ray_y = ray.get_position().1;
+            if aabb.0.1 <= ray_y && ray_y <= aabb.1.1 {
                 return Ok(RayCollisionResult::Continue(ray));
             }
         }
         if let Some(ray) = incoming_ray.intersection_vertical(aabb.1.0) {
+            let ray_y = ray.get_position().1;
+            if aabb.0.1 <= ray_y && ray_y <= aabb.1.1 {
+                return Ok(RayCollisionResult::Continue(ray));
+            }
+        }
+        if let Some(ray) = incoming_ray.intersection_horizontal(aabb.0.1) {
             let ray_x = ray.get_position().0;
             if aabb.0.0 <= ray_x && ray_x <= aabb.1.0 {
                 return Ok(RayCollisionResult::Continue(ray));
             }
         }
-        if let Some(ray) = incoming_ray.intersection_horizontal(aabb.0.1) {
-            let ray_y = ray.get_position().1;
-            if aabb.0.0 <= ray_y && ray_y <= aabb.1.0 {
-                return Ok(RayCollisionResult::Continue(ray));
-            }
-        }
         if let Some(ray) = incoming_ray.intersection_horizontal(aabb.1.1) {
-            let ray_y = ray.get_position().1;
-            if aabb.0.0 <= ray_y && ray_y <= aabb.1.0 {
+            let ray_x = ray.get_position().0;
+            if aabb.0.0 <= ray_x && ray_x <= aabb.1.0 {
                 return Ok(RayCollisionResult::Continue(ray));
             }
         }

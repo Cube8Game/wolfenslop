@@ -4,7 +4,7 @@ pub trait TileDefaultEmpty {
     fn cast_ray_or_empty(&self, incoming_ray: Ray) -> Option<RayCollisionResult>;
 }
 
-impl<T: TileDefaultEmpty + SimpleTile> Tile for T {
+impl<T: TileDefaultEmpty + SimpleTile + Send + Sync + 'static> Tile for T {
     fn cast_ray(&self, incoming_ray: Ray) -> Result<RayCollisionResult> {
         if let Some(ray) = self.cast_ray_or_empty(incoming_ray) {
             return Ok(ray);
