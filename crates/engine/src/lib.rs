@@ -61,7 +61,7 @@ fn ray_cast_setup(
 fn world_setup(
     mut commands: Commands
 ) {
-    commands.spawn(SimpleTileGrid::empty((8, 8)));
+    commands.spawn(SimpleTileGrid::bordered((8, 8)));
 }
 
 fn update_graphics(
