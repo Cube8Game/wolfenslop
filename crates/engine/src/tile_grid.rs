@@ -90,27 +90,31 @@ impl SimpleTileGrid {
         };
         ray.get_position()
     }
-}
 
-impl SimpleTileGrid {
     // Helper function
     fn distance(v1: (f32, f32), v2: (f32, f32)) -> f32 {
         ((v1.0-v2.0).squared() + (v1.1-v2.1).squared()).sqrt()
     }
 
+    pub fn cast_ray_vertical_distance(&self, ray_angle_offset: f32, ray_position: (f32, f32), direction: f32, max_tiles: usize) -> f32 {
+        let ray = Ray::from_radians(direction + ray_angle_offset, ray_position);
+        let actual_distance = Self::distance(
+                self.cast_ray(ray, max_tiles), 
+                ray_position
+            ); 
+        actual_distance * ray_angle_offset.cos()
+    }
+}
+
+impl SimpleTileGrid {
     pub fn raycast<const S: usize>(&self, position: (f32, f32), direction: f32, fov: f32) -> [f32; S] {
         let mut result: [f32; S] = [0.0; S];
         for i in 0..S {
-            let direction = direction + // Rotate by the player direction
-                fov * ( // Multiply range by FOV
-                    ((i as f32) + 0.5) / (S as f32) // From 0.0 to 1.0
-                    - 0.5 // From -0.5 to -0.5
-                );
-            let ray = Ray::from_radians(direction, position);
-            result[i] = Self::distance(
-                self.cast_ray(ray, 256), // TODO: Replace magic number with some function argument
-                position
-            ); 
+            let ray_angle_offset = fov * ( // Multiply range by FOV
+                ((i as f32) + 0.5) / (S as f32) // From 0.0 to 1.0
+                - 0.5 // From -0.5 to -0.5
+            );
+            result[i] = self.cast_ray_vertical_distance(ray_angle_offset, position, direction, 256)// TODO: Replace magic number with some function argument
         }
         result
     }
