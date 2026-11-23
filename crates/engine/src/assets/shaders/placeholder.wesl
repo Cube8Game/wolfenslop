@@ -14,7 +14,11 @@ fn fragment(in: FullscreenVertexOutput) -> @location(0) vec4<f32> {
     let index = u32(round(in.uv.x * 255.0));
     let distance = settings.distances[index].x;
 
-    let val = select(0.0, 1.0, 1.0 / distance > abs((in.uv.y - 0.5) * 2.0)) / distance;
+    let actual_wall_height = 1.0;
+    let viewport_size = vec2<f32>(textureDimensions(screen_texture));
+    let screen_wall_height = actual_wall_height * viewport_size.y / viewport_size.x;
+
+    let val = select(0.0, 1.0, 1.0 / distance > abs((in.uv.y - 0.5) * 6.0 * screen_wall_height)) / distance;
 
     return vec4<f32>(
         val,
