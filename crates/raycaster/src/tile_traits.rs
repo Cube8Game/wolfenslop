@@ -1,4 +1,4 @@
-use crate::{basic_tiles::EmptyTile, error::Result, ray::{Ray, RayCollisionResult}, tile::{SimpleTile, Tile}};
+use crate::{basic_tiles::EmptyTile, error::Result, ray::{Ray, RayCollisionResult}, tile::{SimpleTile, SimpleTileConstructor, Tile}};
 
 pub trait TileDefaultEmpty {
     fn cast_ray_or_empty(&self, incoming_ray: Ray) -> Option<RayCollisionResult>;
@@ -9,7 +9,7 @@ impl<T: TileDefaultEmpty + SimpleTile + Send + Sync + 'static> Tile for T {
         if let Some(ray) = self.cast_ray_or_empty(incoming_ray) {
             return Ok(ray);
         }
-        let fallback = EmptyTile::new(self.get_position());
+        let fallback = EmptyTile::from_position(self.get_position());
         fallback.cast_ray(incoming_ray)
     }
 }

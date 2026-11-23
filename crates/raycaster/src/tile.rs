@@ -8,3 +8,7 @@ pub trait Tile: Send + Sync + 'static {
 pub trait SimpleTile {
     fn get_position(&self) -> (f32, f32);
 }
+
+pub trait SimpleTileConstructor {
+    fn from_position(position: (f32, f32)) -> Self;
+}

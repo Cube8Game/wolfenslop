@@ -1,5 +1,5 @@
 use bevy::{math::FloatPow, platform::collections::HashMap, prelude::*};
-use raycaster::{basic_tiles::EmptyTile, ray::{Ray, RayCollisionResult}, tile::Tile};
+use raycaster::{basic_tiles::EmptyTile, ray::{Ray, RayCollisionResult}, tile::{SimpleTileConstructor, Tile}};
 use raycaster::error::{Error as RayCasterError, Result as RayCasterResult};
 
 #[derive(Component, Default)]
@@ -13,7 +13,7 @@ impl SimpleTileGrid {
         for x in 0..size.0 {
             for y in 0..size.1 {
                 let position = (x as f32, y as f32);
-                result.tiles.insert((x, y), Box::new(EmptyTile::new(position)));
+                result.tiles.insert((x, y), Box::new(EmptyTile::from_position(position)));
             }
         };
         result
@@ -25,28 +25,34 @@ impl SimpleTileGrid {
         // Bottom wall
         for x in 0..size.0 {
             let position = (x as f32, 0.0);
-            result.tiles.insert((x, 0), Box::new(EmptyTile::new(position)));
+            result.tiles.insert((x, 0), Box::new(EmptyTile::from_position(position)));
         }
 
         // Top wall
         for x in 0..size.0 {
             let position = (x as f32, (size.1 - 1) as f32);
-            result.tiles.insert((x, size.1 - 1), Box::new(EmptyTile::new(position)));
+            result.tiles.insert((x, size.1 - 1), Box::new(EmptyTile::from_position(position)));
         }
 
         // Left wall
         for y in 0..size.1 {
             let position = (0.0, y as f32);
-            result.tiles.insert((0, y), Box::new(EmptyTile::new(position)));
+            result.tiles.insert((0, y), Box::new(EmptyTile::from_position(position)));
         }
 
         // Right wall
         for y in 0..size.1 {
             let position = ((size.0 - 1) as f32, y as f32);
-            result.tiles.insert((size.0 - 1, y), Box::new(EmptyTile::new(position)));
+            result.tiles.insert((size.0 - 1, y), Box::new(EmptyTile::from_position(position)));
         }
 
         result
+    }
+}
+
+impl SimpleTileGrid {
+    pub fn set_tile<T: Tile + SimpleTileConstructor>(&mut self, coordinates: (i32, i32)) {
+        self.tiles.insert(coordinates, Box::new(T::from_position((coordinates.0 as f32, coordinates.1 as f32))));
     }
 }
 

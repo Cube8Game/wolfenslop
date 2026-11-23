@@ -9,7 +9,7 @@ pub mod helpers;
 
 #[cfg(test)]
 mod tests {
-    use crate::{basic_tiles::{EmptyTile, FullTile}, error::Error, ray::{Ray, RayCollisionResult}, tile::{Tile}};
+    use crate::{basic_tiles::{EmptyTile, FullTile}, error::Error, ray::{Ray, RayCollisionResult}, tile::{SimpleTileConstructor, Tile}};
 
     #[test]
     fn ray_intersection() {
@@ -24,7 +24,7 @@ mod tests {
 
     #[test]
     fn empty_tile() {
-        let tile = EmptyTile::new((2.0, 4.0));
+        let tile = EmptyTile::from_position((2.0, 4.0));
         let ray = Ray::from_vector((1.0, 1.0), (1.0, 1.0));
         assert_eq!(tile.cast_ray(ray), Err(Error::RayOutOfBounds(ray)));
         let ray = Ray::from_vector((-1.0, -1.0), (2.5, 4.5));
@@ -41,7 +41,7 @@ mod tests {
 
     #[test]
     fn full_tile() {
-        let tile = FullTile::new((2.0, 4.0));
+        let tile = FullTile::from_position((2.0, 4.0));
         let ray = Ray::from_vector((1.0, 1.0), (1.0, 1.0));
         assert_eq!(tile.cast_ray(ray), Err(Error::RayOutOfBounds(ray)));
         let ray = Ray::from_vector((-1.0, -1.0), (2.5, 4.5));

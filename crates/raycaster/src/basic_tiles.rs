@@ -1,4 +1,4 @@
-use crate::{error::{Error, Result}, helpers::point_in_aabb, ray::{Ray, RayCollisionResult}, tile::{SimpleTile, Tile}};
+use crate::{error::{Error, Result}, helpers::point_in_aabb, ray::{Ray, RayCollisionResult}, tile::{SimpleTile, SimpleTileConstructor, Tile}};
 
 pub struct EmptyTile {
     position: (f32, f32)
@@ -44,8 +44,8 @@ impl SimpleTile for EmptyTile {
     }
 }
 
-impl EmptyTile {
-    pub fn new(position: (f32, f32)) -> Self {
+impl SimpleTileConstructor for EmptyTile {
+    fn from_position(position: (f32, f32)) -> Self {
         Self { position }
     }
 }
@@ -72,8 +72,8 @@ impl SimpleTile for FullTile {
     }
 }
 
-impl FullTile {
-    pub fn new(position: (f32, f32)) -> Self {
+impl SimpleTileConstructor for FullTile {
+    fn from_position(position: (f32, f32)) -> Self {
         Self { position }
     }
 }

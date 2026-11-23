@@ -1,6 +1,7 @@
 mod tile_grid;
 
 use bevy::{asset::embedded_asset, core_pipeline::fullscreen_material::{FullscreenMaterial, FullscreenMaterialPlugin}, prelude::*, render::{RenderApp, extract_component::ExtractComponent, render_resource::ShaderType}};
+use raycaster::basic_tiles::FullTile;
 
 use crate::tile_grid::SimpleTileGrid;
 
@@ -61,7 +62,9 @@ fn ray_cast_setup(
 fn world_setup(
     mut commands: Commands
 ) {
-    commands.spawn(SimpleTileGrid::bordered((8, 8)));
+    let mut grid = SimpleTileGrid::bordered((15, 15));
+    grid.set_tile::<FullTile>((7, 7));
+    commands.spawn(grid);
 }
 
 fn update_graphics(
