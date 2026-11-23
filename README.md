@@ -14,6 +14,12 @@ Go to the Github releases and download the Linux x86_64 build of the game (more 
 
 You can use WASD to move and you can move the mouse to aim.
 
+## Troubleshooting
+
+### Unable to find a GPU!
+
+Make sure to install the Vulkan drivers. On Arch Linux, you can do this using `sudo pacman -S vulkan-intel` for Intel graphics cards or `sudo pacman -S vulkan-radeon` for AMD graphics cards.
+
 ## Why I made this
 
 This game's whole plot is basically just vent art about the current state of AI. Also, I love making raycasting engines :3
