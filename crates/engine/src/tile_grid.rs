@@ -1,5 +1,5 @@
 use bevy::{math::FloatPow, platform::collections::HashMap, prelude::*};
-use raycaster::{basic_tiles::EmptyTile, ray::{Ray, RayCollisionResult}, tile::{SimpleTileConstructor, Tile}};
+use raycaster::{basic_tiles::{EmptyTile, FullTile}, ray::{Ray, RayCollisionResult}, tile::{SimpleTileConstructor, Tile}};
 use raycaster::error::{Error as RayCasterError, Result as RayCasterResult};
 
 #[derive(Component, Default)]
@@ -24,26 +24,14 @@ impl SimpleTileGrid {
 
         // Bottom wall
         for x in 0..size.0 {
-            let position = (x as f32, 0.0);
-            result.tiles.insert((x, 0), Box::new(EmptyTile::from_position(position)));
-        }
-
-        // Top wall
-        for x in 0..size.0 {
-            let position = (x as f32, (size.1 - 1) as f32);
-            result.tiles.insert((x, size.1 - 1), Box::new(EmptyTile::from_position(position)));
+            result.set_tile::<FullTile>((x, 0));
+            result.set_tile::<FullTile>((x, size.0 - 1));
         }
 
         // Left wall
         for y in 0..size.1 {
-            let position = (0.0, y as f32);
-            result.tiles.insert((0, y), Box::new(EmptyTile::from_position(position)));
-        }
-
-        // Right wall
-        for y in 0..size.1 {
-            let position = ((size.0 - 1) as f32, y as f32);
-            result.tiles.insert((size.0 - 1, y), Box::new(EmptyTile::from_position(position)));
+            result.set_tile::<FullTile>((0, y));
+            result.set_tile::<FullTile>((size.1 - 1, y));
         }
 
         result
