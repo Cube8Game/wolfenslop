@@ -1,6 +1,6 @@
 mod tile_grid;
 
-use bevy::{asset::embedded_asset, core_pipeline::fullscreen_material::{FullscreenMaterial, FullscreenMaterialPlugin}, prelude::*, render::{RenderApp, extract_component::ExtractComponent, render_resource::ShaderType}};
+use bevy::{asset::embedded_asset, core_pipeline::{Core2d, Core2dSystems, fullscreen_material::{FullscreenMaterial, FullscreenMaterialPlugin}, tonemapping}, ecs::schedule::ScheduleLabel, prelude::*, render::{RenderApp, extract_component::ExtractComponent, render_resource::ShaderType}};
 use raycaster::basic_tiles::FullTile;
 
 use crate::tile_grid::SimpleTileGrid;
@@ -28,6 +28,16 @@ impl FullscreenMaterial for RayCastShader {
     fn fragment_shader() -> bevy::shader::ShaderRef {
         "embedded://engine/assets/shaders/raycaster.wesl".into()
     }
+
+    fn schedule() -> impl ScheduleLabel + Clone {
+        Core2d
+    }
+    
+    fn schedule_configs(system: bevy::ecs::schedule::ScheduleConfigs<bevy::ecs::system::BoxedSystem>) -> bevy::ecs::schedule::ScheduleConfigs<bevy::ecs::system::BoxedSystem> {
+        system
+            .in_set(Core2dSystems::PostProcess)
+            .before(tonemapping::tonemapping)
+    }
 }
 pub struct RayCasterPlugin;
 
@@ -53,7 +63,7 @@ fn ray_cast_setup(
     mut commands: Commands,
 ) {
     commands.spawn((
-        Camera3d::default(),
+        Camera2d::default(),
         Transform::default(),
         RayCastShader::default(),
     ));
