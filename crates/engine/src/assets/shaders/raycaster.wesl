@@ -25,7 +25,9 @@ fn fragment(in: FullscreenVertexOutput) -> @location(0) vec4<f32> {
 
     let val = select(0.0, 1.0, 1.0 > wall_eye_distance) / distance;
 
-    let color = vec3(settings.rays[index].y, (1.0 - wall_eye_distance_signed) * 0.5, 0.0) * val;
+    let uv = vec2(settings.rays[index].y, (1.0 - wall_eye_distance_signed) * 0.5);
+
+    let color = vec3(uv, 0.0) * val;
 
     return vec4<f32>(
         color,
