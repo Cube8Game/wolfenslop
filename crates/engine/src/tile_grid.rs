@@ -1,5 +1,5 @@
 use bevy::{math::FloatPow, platform::collections::HashMap, prelude::*};
-use raycaster::{basic_tiles::{EmptyTile, FullTile}, ray::{Ray, RayCollisionResult}, tile::{SimpleTileConstructor, Tile}};
+use raycaster::{basic_tiles::{EmptyTile, FullTile}, ray::{Ray, RayCollisionResult, RayHit}, tile::{SimpleTileConstructor, Tile}};
 use raycaster::error::{Error as RayCasterError, Result as RayCasterResult};
 
 #[derive(Component, Default)]
@@ -26,10 +26,14 @@ impl SimpleTileGrid {
         for x in 0..size.0 {
             result.set_tile::<FullTile>((x, 0));
             result.set_tile::<FullTile>((x, size.0 - 1));
+            result.set_tile::<FullTile>((x, 0));
+            result.set_tile::<FullTile>((x, size.0 - 1));
         }
 
         // Left wall
         for y in 0..size.1 {
+            result.set_tile::<FullTile>((0, y));
+            result.set_tile::<FullTile>((size.1 - 1, y));
             result.set_tile::<FullTile>((0, y));
             result.set_tile::<FullTile>((size.1 - 1, y));
         }
@@ -59,7 +63,7 @@ impl SimpleTileGrid {
         }
     }
 
-    pub fn cast_ray(&self, incoming_ray: Ray, max_tiles: usize) -> (f32, f32) {
+    pub fn cast_ray(&self, incoming_ray: Ray, max_tiles: usize) -> RayHit {
         let mut ray = incoming_ray;
         for _ in 0..max_tiles {
             match self.cast_ray_single_tile(ray) {
@@ -68,21 +72,21 @@ impl SimpleTileGrid {
                         RayCollisionResult::Continue(new_ray) => {
                             ray = new_ray;
                         }
-                        RayCollisionResult::Hit(x, y) => {
-                            return (x, y);
+                        RayCollisionResult::Hit(ray_hit) => {
+                            return ray_hit;
                         }
                     }
                 }
                 Err(e) => {
                     match e {
                         RayCasterError::RayOutOfBounds(ray) => {
-                            return ray.get_position();
+                            return RayHit::new(ray.get_position(), 0.0);
                         }
                     }
                 }
             }
         };
-        ray.get_position()
+        RayHit::new(ray.get_position(), 0.0)
     }
 
     // Helper functions
@@ -97,23 +101,33 @@ impl SimpleTileGrid {
         horizontal_deviation.atan()
     }
 
-    pub fn cast_ray_vertical_distance(&self, ray_angle_offset: f32, ray_position: (f32, f32), direction: f32, max_tiles: usize) -> f32 {
+    pub fn cast_ray_vertical_distance(&self, ray_angle_offset: f32, ray_position: (f32, f32), direction: f32, max_tiles: usize) -> RayDistanceHit {
         let ray = Ray::from_radians(direction + ray_angle_offset, ray_position);
+        let ray_hit = self.cast_ray(ray, max_tiles);
         let actual_distance = Self::distance(
-                self.cast_ray(ray, max_tiles), 
+                ray_hit.position, 
                 ray_position
             ); 
-        actual_distance * ray_angle_offset.cos()
+        RayDistanceHit { 
+            distance: actual_distance * ray_angle_offset.cos(), 
+            texture: ray_hit.texture 
+        }
     }
 }
 
 impl SimpleTileGrid {
-    pub fn raycast<const S: usize>(&self, position: (f32, f32), direction: f32, fov: f32) -> [f32; S] {
-        let mut result: [f32; S] = [0.0; S];
+    pub fn raycast<const S: usize>(&self, position: (f32, f32), direction: f32, fov: f32) -> [RayDistanceHit; S] {
+        let mut result: [RayDistanceHit; S] = [(RayDistanceHit::default()); S];
         for i in 0..S {
             let ray_angle_offset = Self::get_angle_offset(fov, ((i as f32) + 0.5) / (S as f32));
-            result[i] = self.cast_ray_vertical_distance(ray_angle_offset, position, direction, 256) // TODO: Replace magic number with some function argument
+            result[i] = self.cast_ray_vertical_distance(ray_angle_offset, position, direction, 256)
         }
         result
     }
+}
+
+#[derive(Debug, Default, Clone, Copy)]
+pub struct RayDistanceHit {
+    pub distance: f32,
+    pub texture: f32
 }

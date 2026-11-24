@@ -79,5 +79,20 @@ impl Ray {
 #[derive(Debug, PartialEq, Clone, Copy)]
 pub enum RayCollisionResult {
     Continue(Ray),
-    Hit(f32, f32)
+    Hit(RayHit)
+}
+
+#[derive(Debug, PartialEq, Clone, Copy)]
+pub struct RayHit {
+    pub position: (f32, f32),
+    pub texture: f32
+}
+
+impl RayHit {
+    pub fn new(position: (f32, f32), texture: f32) -> Self {
+        Self {
+            position,
+            texture
+        }
+    }
 }

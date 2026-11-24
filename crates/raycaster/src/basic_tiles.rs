@@ -1,4 +1,4 @@
-use crate::{error::{Error, Result}, helpers::point_in_aabb, ray::{Ray, RayCollisionResult}, tile::{SimpleTile, SimpleTileConstructor, Tile}};
+use crate::{error::{Error, Result}, helpers::point_in_aabb, ray::{Ray, RayCollisionResult, RayHit}, tile::{SimpleTile, SimpleTileConstructor, Tile}};
 
 pub struct EmptyTile {
     position: (f32, f32)
@@ -62,7 +62,13 @@ impl Tile for FullTile {
             return Err(Error::RayOutOfBounds(incoming_ray));
         }
         let position = incoming_ray.get_position();
-        Ok(RayCollisionResult::Hit(position.0, position.1))
+        let local_position = (position.0 - self.position.0, position.1 - self.position.1);
+        let texture = if local_position.0 > local_position.1 {
+            1.0 - ((local_position.0 + local_position.1) % 1.0)
+        } else {
+            (local_position.0 + local_position.1) % 1.0
+        };
+        Ok(RayCollisionResult::Hit(RayHit::new((position.0, position.1), texture)))
     }
 }
 

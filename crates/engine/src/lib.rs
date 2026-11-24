@@ -13,13 +13,13 @@ pub struct Player;
 #[derive(Component, ExtractComponent, Clone, Copy, ShaderType)]
 #[extract_app(RenderApp)]
 pub struct RayCastShader {
-    distances: [Vec4; HORIZONTAL_RESOLUTION],
+    rays: [Vec4; HORIZONTAL_RESOLUTION],
 }
 
 impl Default for RayCastShader {
     fn default() -> Self {
         Self {
-            distances: [Vec4::ONE; HORIZONTAL_RESOLUTION]
+            rays: [Vec4::new(1.0, 0.5, 0.0, 0.0); HORIZONTAL_RESOLUTION], // TODO: Get texture UV from world
         }
     }
 }
@@ -74,8 +74,8 @@ fn update_graphics(
 ) {
     let distances = world.raycast(camera.position.into(), camera.direction, camera.fov);
     for mut effect in effects.iter_mut() {
-        effect.distances = distances.map(|n| {
-            Vec4::new(n, 0.0, 0.0, 0.0)
+        effect.rays = distances.map(|hit| {
+            Vec4::new(hit.distance, hit.texture, 0.0, 0.0)
         });
     }
 }
