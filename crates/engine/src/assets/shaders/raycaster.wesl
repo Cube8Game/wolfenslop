@@ -4,14 +4,14 @@ import bevy_core_pipeline::fullscreen_vertex_shader::FullscreenVertexOutput;
 @group(0) @binding(1) var texture_sampler: sampler;
 
 struct RayCastShader {
-    rays: array<vec4<f32>, 256>,
+    rays: array<vec4<f32>, 1024>,
 }
 
 @group(0) @binding(2) var<uniform> settings: RayCastShader;
 
 @fragment
 fn fragment(in: FullscreenVertexOutput) -> @location(0) vec4<f32> {
-    let index = u32(round(in.uv.x * 255.0));
+    let index = u32(round(in.uv.x * 1023.0));
     let distance = settings.rays[index].x;
 
     let actual_wall_height = 1.0;

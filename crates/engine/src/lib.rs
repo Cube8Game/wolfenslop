@@ -5,7 +5,7 @@ use raycaster::basic_tiles::FullTile;
 
 use crate::tile_grid::SimpleTileGrid;
 
-const HORIZONTAL_RESOLUTION: usize = 256;
+const HORIZONTAL_RESOLUTION: usize = 1024;
 
 #[derive(Component, ExtractComponent, Clone, Copy, ShaderType)]
 #[extract_app(RenderApp)]
