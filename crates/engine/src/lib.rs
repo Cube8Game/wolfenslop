@@ -7,9 +7,6 @@ use crate::tile_grid::SimpleTileGrid;
 
 const HORIZONTAL_RESOLUTION: usize = 256;
 
-#[derive(Component)]
-pub struct Player;
-
 #[derive(Component, ExtractComponent, Clone, Copy, ShaderType)]
 #[extract_app(RenderApp)]
 pub struct RayCastShader {
