@@ -26,14 +26,14 @@ impl Default for RayCastShader {
 
 impl FullscreenMaterial for RayCastShader {
     fn fragment_shader() -> bevy::shader::ShaderRef {
-        "embedded://engine/assets/shaders/placeholder.wesl".into()
+        "embedded://engine/assets/shaders/raycaster.wesl".into()
     }
 }
 pub struct RayCasterPlugin;
 
 impl Plugin for RayCasterPlugin {
     fn build(&self, app: &mut App) {
-        embedded_asset!(app, "assets/shaders/placeholder.wesl");
+        embedded_asset!(app, "assets/shaders/raycaster.wesl");
 
         app
             .add_plugins(FullscreenMaterialPlugin::<RayCastShader>::default())
