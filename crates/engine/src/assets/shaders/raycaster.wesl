@@ -18,9 +18,14 @@ fn fragment(in: FullscreenVertexOutput) -> @location(0) vec4<f32> {
     let viewport_size = vec2<f32>(textureDimensions(screen_texture));
     let screen_wall_height = actual_wall_height * viewport_size.y / viewport_size.x;
 
-    let val = select(0.0, 1.0, 1.0 / distance > abs((in.uv.y - 0.5) * 6.0 * screen_wall_height)) / distance;
+    let screen_eye_distance_signed = (in.uv.y - 0.5) * 2.0;
 
-    let color = vec3(1.0, settings.rays[index].y, 1.0) * val;
+    let wall_eye_distance_signed = screen_eye_distance_signed * 3.0 * screen_wall_height * distance;
+    let wall_eye_distance = abs(wall_eye_distance_signed);
+
+    let val = select(0.0, 1.0, 1.0 > wall_eye_distance) / distance;
+
+    let color = vec3(settings.rays[index].y, (1.0 - wall_eye_distance_signed) * 0.5, 0.0) * val;
 
     return vec4<f32>(
         color,
