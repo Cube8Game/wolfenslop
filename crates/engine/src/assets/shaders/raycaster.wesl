@@ -23,7 +23,7 @@ fn fragment(in: FullscreenVertexOutput) -> @location(0) vec4<f32> {
     let wall_eye_distance_signed = screen_eye_distance_signed * 3.0 * screen_wall_height * distance;
     let wall_eye_distance = abs(wall_eye_distance_signed);
 
-    let val = select(0.0, 1.0, 1.0 > wall_eye_distance) / distance;
+    let val = select(0.0, 1.0, 1.0 > wall_eye_distance) / (distance + 1.0);
 
     let uv = vec2(settings.rays[index].y, (1.0 - wall_eye_distance_signed) * 0.5);
 
